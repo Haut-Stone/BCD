@@ -1,0 +1,66 @@
+/*
+* @Author: Haut-Stone
+* @Date:   2017-06-17 14:19:33
+* @Last Modified by:   Haut-Stone
+* @Last Modified time: 2017-06-17 15:38:18
+*/
+
+body {
+  font-family: Avenir;
+  margin: 0px;
+  background: no-repeat center center fixed;
+  -webkit-background–size: cover;
+  -moz-background–size: cover;
+  -o-background–size: cover;
+  background-size: cover;
+}
+
+.cont {
+  background-color: rgba(0, 0, 0, 0.36);
+  border: none;
+  border-radius: 16px;
+  padding: 70px 0;
+  box-shadow: 0px 2px 4px #000;
+  height: 200px;
+  width: 1000px;
+  margin: auto;
+  position: relative;
+  top: 160px;
+}
+
+#btn {
+  background-image: url("images/iSearch.png");
+  background-color: #F6F6F6;
+  position: absolute;
+  width: 66px;
+  height: 66px;
+  border: none;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: 0px 2px 4px #000;
+  cursor: pointer;
+}
+
+h1 {
+  color: #FFF;
+  font-size: 40px;
+  text-shadow: 0px 2px 4px #000;
+  font-weight: lighter;
+  text-align: center;
+}
+
+#form1 {
+  text-align: center;
+  position: relative;
+  left: -33px;
+}
+
+#search {
+  height: 64px;
+  width: 550px;
+  border: none;
+  font-size: 32px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  box-shadow: 0px 2px 4px #000;
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <title>BilibiliCoverDownloader</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'Downloader/hello-style.css' %}">
+  <script type="text/javascript" src="{% static 'Downloader/jquery-3.2.1.min.js' %}"></script>
+  <script type="text/javascript">
+    var main = function() {
+      function setBackgroundImage() {
+        var imgs = ["{% static 'Downloader/images/bg-img-1.jpg' %}", "{% static 'Downloader/images/bg-img-2.jpg' %}", "{% static 'Downloader/images/bg-img-3.jpg' %}"];
+        var index = Math.floor(Math.random() * (imgs.length));
+        $('body').css('background-image', 'url('+imgs[index]+')');
+      }
+      setBackgroundImage();
+    }
+
+    $(document).ready(main);
+  </script>
+</head>
+<body>
+  <div class="cont">
+    <h1>在这里输入av号 </h1>
+    <div class="searchBar">
+      <form id="form1" action="{% url 'Downloader:loadPage'%}" method="post">
+        {% csrf_token %}
+        <input id="search" name="target" value="av"/>
+        <button id="btn" type="submit"></button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
