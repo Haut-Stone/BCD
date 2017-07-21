@@ -45,6 +45,54 @@ def resultPage(request, number):
 	else:
 		return render(request, 'Downloader/loadPage.html', info)
 
+#爬取up主头像的iOS端API
+def searchUpPage(request, up_name):
+	video_url = 'https://search.bilibili.com/upuser?keyword=' + up_name
+	headers = {
+		'User-Agent' : 'Mozilla/5.0',
+	}
+
+	r = requests.get(video_url, headers = headers)
+	bs = BeautifulSoup(r.text, 'html5lib')
+
+	up_infos = {'sum':0,'upusers':[]}
+
+	for up in bs.findAll(attrs={'class': 'up-item'}):
+		upface = up.findAll('div')[0]
+		name = upface.a['title']
+		imgUrl = 'https:' + upface.a.img['data-src']
+		upinfo = up.findAll('div')[1].findAll('div')[2].findAll('span')
+		videoNum = upinfo[0].get_text()
+		fansNum = upinfo[1].get_text()
+
+		up_info = {
+			'name':name,
+			'video_num':videoNum,
+			'fans_num':fansNum,
+			'img_url':imgUrl,
+		}
+
+		up_infos['sum'] = up_infos['sum'] + 1
+		up_infos['upusers'].append(up_info)
+
+		print ('UP: ' + name)
+		print (videoNum)
+		print (fansNum)
+		print ('image url: ' + imgUrl)
+		print ('_____________________________________________________________')
+
+		
+	filename = "up_infos.json"
+	try:
+		with open(filename, 'w') as f:
+			json.dump(up_infos, f, ensure_ascii=False, indent=2)
+	except IOError:
+		print("The file doesn't exit.")
+	else:
+		with open(filename) as f:
+			return HttpResponse(f)
+
+
 # 爬取图片的爬虫代码
 def spider(av_number):
 
