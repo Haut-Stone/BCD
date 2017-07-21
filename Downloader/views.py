@@ -74,14 +74,6 @@ def searchUpPage(request, up_name):
 
 		up_infos['sum'] = up_infos['sum'] + 1
 		up_infos['upusers'].append(up_info)
-
-		print ('UP: ' + name)
-		print (videoNum)
-		print (fansNum)
-		print ('image url: ' + imgUrl)
-		print ('_____________________________________________________________')
-
-		
 	filename = "up_infos.json"
 	try:
 		with open(filename, 'w') as f:
@@ -131,10 +123,5 @@ def spider(av_number):
 			'title':title,
 			'author':author,
 		}
-
-		print("videoUrl: " + video_url)
-		print("imgUrl: " + img_url)
-		print("Title: " + title)
-		print("Author: " + author)
 	return  msg
 
