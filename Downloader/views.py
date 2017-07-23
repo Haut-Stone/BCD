@@ -25,15 +25,8 @@ def iosPage(request, number):
 	av_number = "av" + number
 	info = spider(av_number)
 
-	filename = "msg.json"
-	try:
-		with open(filename, 'w') as f:
-			json.dump(info, f, ensure_ascii=False, indent=2)
-	except IOError:
-		print("The file doesn't exit.")
-	else:
-		with open(filename) as f:
-			return HttpResponse(f)
+	json_obj = json.dumps(info, ensure_ascii=False, indent=2) 
+	return HttpResponse(json_obj)
 
 #从url直接跳转
 def resultPage(request, number):
@@ -51,10 +44,8 @@ def searchUpPage(request, up_name):
 	headers = {
 		'User-Agent' : 'Mozilla/5.0',
 	}
-
 	r = requests.get(video_url, headers = headers)
 	bs = BeautifulSoup(r.text, 'html5lib')
-
 	up_infos = {'sum':0,'upusers':[]}
 
 	for up in bs.findAll(attrs={'class': 'up-item'}):
@@ -62,29 +53,20 @@ def searchUpPage(request, up_name):
 		name = upface.a['title']
 		imgUrl = 'https:' + upface.a.img['data-src']
 		upinfo = up.findAll('div')[1].findAll('div')[2].findAll('span')
-		videoNum = upinfo[0].get_text()
-		fansNum = upinfo[1].get_text()
-
+		videoNum = re.findall("\d+",upinfo[0].get_text())[0]
+		fansNum = re.findall("\d+",upinfo[1].get_text())[0]
 		up_info = {
 			'name':name,
 			'video_num':videoNum,
 			'fans_num':fansNum,
 			'img_url':imgUrl,
 		}
-
 		up_infos['sum'] = up_infos['sum'] + 1
 		up_infos['upusers'].append(up_info)
-	filename = "up_infos.json"
-	try:
-		with open(filename, 'w') as f:
-			json.dump(up_infos, f, ensure_ascii=False, indent=2)
-	except IOError:
-		print("The file doesn't exit.")
-	else:
-		with open(filename) as f:
-			return HttpResponse(f)
 
-
+	json_obj = json.dumps(up_infos, ensure_ascii=False, indent=2) 
+	return HttpResponse(json_obj)
+	
 # 爬取图片的爬虫代码
 def spider(av_number):
 
@@ -124,4 +106,3 @@ def spider(av_number):
 			'author':author,
 		}
 	return  msg
-
