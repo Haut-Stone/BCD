@@ -41,9 +41,7 @@ def resultPage(request, number):
 #爬取up主头像的iOS端API
 def searchUpPage(request, up_name):
 	video_url = 'https://search.bilibili.com/upuser?keyword=' + up_name
-	headers = {
-		'User-Agent' : 'Mozilla/5.0',
-	}
+	headers = {'User-Agent' : 'Mozilla/5.0'}
 	r = requests.get(video_url, headers = headers)
 	bs = BeautifulSoup(r.text, 'html5lib')
 	up_infos = {'sum':0,'upusers':[]}
@@ -71,38 +69,73 @@ def searchUpPage(request, up_name):
 def spider(av_number):
 
 	headers = {
-		'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-		'Accept-Encoding':'gzip, deflate, sdch',
-		'Accept-Language':'zh-CN,zh;q=0.8',
-		'Cache-Control':'max-age=0',
-		'Connection':'keep-alive',
-		'Cookie':'sid=ao8p7v84; UM_distinctid=15b7180b90f66-0f075e064d05ab-396c7807-1fa400-15b7180b91285; pgv_pvi=3513811968; fts=1492257914; finger=14bc3c4e; buvid3=835A244A-230C-4CF5-8FB3-E8C675EE8EA115577infoc; purl_token=bilibili_1497336042; pgv_si=s4574550016; CNZZDATA2724999=cnzz_eid%3D108963144-1492253091-%26ntime%3D1497334496',
-		'Host':'www.bilibili.com',
-		'Referer':'http://space.bilibili.com/3098214',
-		'Upgrade-Insecure-Requests':'1',
 		'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
 	}
-
 	video_url = "http://www.bilibili.com/video/" + av_number
 	r = requests.get(video_url, headers = headers)
 	bs = BeautifulSoup(r.text, 'html5lib')
 	img_link = bs.findAll('img')[0].get('src')
 
 	if img_link == None:
-		msg = {
-			'url':'error',
-			'title':'error',
-			'author':'error',
-		}
+		msg = {'url':'error','title':'error','author':'error',}
 	else:
 		img_url = "http:" + img_link
 		title = bs.findAll('h1')[0].get('title')
 		contents = bs.findAll('meta')
 		author = contents[3].get('content')
-
-		msg = {
-			'url':img_url,
-			'title':title,
-			'author':author,
-		}
+		msg = {'url':img_url,'title':title,'author':author,}
 	return  msg
+
+def fuckBilibili(request, av_number):
+
+	url = 'http://www.bilibili.com/video/av' + str(av_number)
+	headers = {'User-Agent':'Mozilla/5.0'}
+	cookies = {
+		'DedeUserID': '221013145',
+		'DedeUserID__ckMd5': '0ada37d8e37bee1f',
+		'SESSDATA': 'ddff3d5b%2C1508937653%2C5dc59211'
+	}
+	default = {'url':'error','title':'error','author':'error'}
+	default_json = json.dumps(default, ensure_ascii=False, indent=2)
+	try:
+		r = requests.get(url, headers=headers, cookies=cookies, timeout=3)
+		r.raise_for_status()
+		r.encoding = r.apparent_encoding
+	except:
+		return HttpResponse(default_json)
+	bs = BeautifulSoup(r.text, 'html5lib')
+	link = bs.find_all('img')[0].get('src')		
+	if link == None:
+		return HttpResponse(default_json)
+	else:
+		title = bs.find_all('h1')[0].get('title')
+		contents = bs.find_all('meta')
+		author = contents[3].get('content')
+		info = {'url':'https:' + link, 'title':title, 'author':author,}
+		info_json = json.dumps(info, ensure_ascii=False, indent=2)
+		return HttpResponse(info_json)
+
+def articleCover(request, cv_number):
+	url = 'http://www.bilibili.com/read/cv' + str(cv_number)
+	headers = {'User-Agent':'Mozilla/5.0'}
+	default = {'url':'error','title':'error','author':'error'}
+	default_json = json.dumps(default, ensure_ascii=False, indent=2) 
+
+	try:
+		r = requests.get(url, headers=headers)
+		r.raise_for_status()
+		r.encoding = r.apparent_encoding
+	except:
+		return HttpResponse(default_json)
+	bs = BeautifulSoup(r.text, 'html5lib')
+	error = bs.find_all('div', class_='error')
+	if len(error) == 0:
+		js = bs.find_all('script')[0].text
+		if js == None:
+			return HttpResponse(default_json)
+		else:
+			link = {'url':js.split('"')[7]}
+			link_json = json.dumps(link, ensure_ascii=False, indent=2) 
+			return HttpResponse(link_json)
+	else:
+		return HttpResponse(default_json)
