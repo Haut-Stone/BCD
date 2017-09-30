@@ -134,8 +134,12 @@ def articleCover(request, cv_number):
 		if js == None:
 			return HttpResponse(default_json)
 		else:
-			link = {'url':js.split('"')[7]}
-			link_json = json.dumps(link, ensure_ascii=False, indent=2) 
-			return HttpResponse(link_json)
+			info = {
+				'url':js.split('"')[7],
+				'title':js.split('"')[11],
+				'author':js.split('"')[3]
+			}
+			info_json = json.dumps(info, ensure_ascii=False, indent=2) 
+			return HttpResponse(info_json)
 	else:
 		return HttpResponse(default_json)
