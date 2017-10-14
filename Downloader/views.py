@@ -72,7 +72,9 @@ def spider(av_number):
 		'User-Agent':'Mozilla/5.0'
 	}
 	video_url = "http://www.bilibili.com/video/" + av_number
+	print(video_url)
 	r = requests.get(video_url, headers = headers)
+	print(r.text)
 	bs = BeautifulSoup(r.text, 'html5lib')
 	img_link = bs.findAll('img')[0].get('src')
 
