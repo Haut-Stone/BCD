@@ -69,7 +69,7 @@ def searchUpPage(request, up_name):
 def spider(av_number):
 
 	headers = {
-		'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+		'User-Agent':'Mozilla/5.0'
 	}
 	video_url = "http://www.bilibili.com/video/" + av_number
 	r = requests.get(video_url, headers = headers)
@@ -83,8 +83,8 @@ def spider(av_number):
 		title = bs.findAll('h1')[0].get('title')
 		contents = bs.findAll('meta')
 		author = contents[3].get('content')
-		msg = {'url':img_url,'title':title,'author':author,}
-	return  msg
+		msg = {'url':img_url,'title':title,'author':author}
+	return msg
 
 def fuckBilibili(request, av_number):
 
