@@ -143,3 +143,39 @@ def articleCover(request, cv_number):
 			return HttpResponse(info_json)
 	else:
 		return HttpResponse(default_json)
+
+def i_test(request, number):
+	av_number = "av" + number
+	headers = {'User-Agent':'Mozilla/5.0'}
+	url = "http://www.bilibili.com/video/" + av_number
+	try:
+		r = requests.get(url, headers=headers)
+		r.raise_for_status()
+		r.encoding = r.apparent_encoding
+	except:
+		error = {'error':'无法连接到这个网站'}
+		error_json = json.dumps(error, ensure_ascii=False, indent=2)
+		return HttpResponse(error_json)
+	else:
+		bs = BeautifulSoup(r.text, 'html5lib')
+		img_link = bs.findAll('img')[0].get('src')
+		if img_link is None:
+			error = {
+				'error':'没有找到图片',
+				'html':r.text,
+				'r.status_code':r.status_code,
+			}
+			error_json = json.dumps(error, ensure_ascii=False)
+			return HttpResponse(error_json)
+		else:
+			img_url = "http:" + img_link
+			title = bs.findAll('h1')[0].get('title')
+			contents = bs.findAll('meta')
+			author = contents[3].get('content')
+			info = {
+				'url':img_url,
+				'title':title,
+				'author':author,
+			}
+			info_json = json.dumps(info, ensure_ascii=False, indent=2)
+			return HttpResponse(info_json)
