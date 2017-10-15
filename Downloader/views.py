@@ -159,24 +159,33 @@ def i_test(request, number):
 		bs = BeautifulSoup(r.text, 'html5lib')
 		img_link = bs.findAll('img')[0].get('src')
 		if img_link is None:
-			error = {
-				'url':url,
-				'r.headers':dict(r.headers),
-				'error':'没有找到图片',
-				'html':r.text,
-				'r.status_code':r.status_code,
-			}
-			error_json = json.dumps(error, ensure_ascii=False)
-			return HttpResponse(error_json)
+			pre_path = 'https://search.bilibili.com/all'
+			kv = {'keyword':av_number}
+			r = requests.get(url, headers=headers)
+			bs = BeautifulSoup(r.text, 'html5lib')
+			re_av_info_li = bs.findAll('li', class_='video list av')
+			if re_av_info_li is None:
+				error = {'error':'这个图片真的找不到了'}
+				error_json = json.dumps(error, ensure_ascii=False, indent=2)
+				return HttpResponse(error_json)
+			else:
+				img_dic = re_av_info_li[0].findAll('a')[0].find('img').attrs
+				re_img_link = 'http:' + img_dic['data-src']
+				author = re_av_info_li[0].findAll('a')[-1].string
+				title = re_av_info_li[0].findAll('a')[0].get('title')
+				info = {
+					'url':re_img_link,
+					'title':title,
+					'author':author,
+				}
+				info_json = json.dumps(info, ensure_ascii=False)
+				return HttpResponse(info_json)
 		else:
 			img_url = "http:" + img_link
 			title = bs.findAll('h1')[0].get('title')
 			contents = bs.findAll('meta')
 			author = contents[3].get('content')
 			info = {
-				'r.headers':dict(r.headers),
-				'html':r.text,
-				'r.status_code':r.status_code,
 				'url':img_url,
 				'title':title,
 				'author':author,
