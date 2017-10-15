@@ -68,16 +68,36 @@ def searchUpPage(request, up_name):
 # 爬取图片的爬虫代码
 def spider(av_number):
 
-	headers = {
-		'User-Agent':'Mozilla/5.0',
+	headers = {'User-Agent':'Mozilla/5.0'}
+	cookies = {
+		'DedeUserID': '221013145',
+		'DedeUserID__ckMd5': '0ada37d8e37bee1f',
+		'SESSDATA': 'ddff3d5b%2C1508937653%2C5dc59211'
 	}
 	video_url = "http://www.bilibili.com/video/" + av_number
-	r = requests.get(video_url, headers = headers)
+	r = requests.get(video_url, headers=headers, cookies=cookies)
 	bs = BeautifulSoup(r.text, 'html5lib')
 	img_link = bs.findAll('img')[0].get('src')
 
-	if img_link == None:
-		msg = {'url':'error','title':'error','author':'error',}
+	if img_link is None:
+		pre_path = 'https://search.bilibili.com/all'
+		kv = {'keyword':av_number}
+		r = requests.get(pre_path, headers=headers, params=kv)
+		bs = BeautifulSoup(r.text, 'html5lib')
+		re_av_info_li = bs.findAll('li', class_='video list av')
+		if len(re_av_info_li) is 0:
+			msg = {'url':'error','title':'error','author':'error'}
+		else:
+			img_dic = re_av_info_li[0].findAll('a')[0].find('img').attrs
+			re_img_link = 'http:' + img_dic['data-src']
+			author = re_av_info_li[0].findAll('a')[-1].string
+			title = re_av_info_li[0].findAll('a')[0].get('title')
+			info = {
+				'url':re_img_link,
+				'title':title,
+				'author':author,
+			}
+			msg = info
 	else:
 		img_url = "http:" + img_link
 		title = bs.findAll('h1')[0].get('title')
@@ -90,11 +110,7 @@ def fuckBilibili(request, av_number):
 
 	url = 'http://www.bilibili.com/video/av' + str(av_number)
 	headers = {'User-Agent':'Mozilla/5.0'}
-	cookies = {
-		'DedeUserID': '221013145',
-		'DedeUserID__ckMd5': '0ada37d8e37bee1f',
-		'SESSDATA': 'ddff3d5b%2C1508937653%2C5dc59211'
-	}
+	
 	default = {'url':'error','title':'error','author':'error'}
 	default_json = json.dumps(default, ensure_ascii=False, indent=2)
 	try:
