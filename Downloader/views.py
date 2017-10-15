@@ -162,7 +162,6 @@ def i_test(request, number):
 			error = {
 				'url':url,
 				'r.headers':dict(r.headers),
-				'r.response':dict(r.reponse),
 				'error':'没有找到图片',
 				'html':r.text,
 				'r.status_code':r.status_code,
