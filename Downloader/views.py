@@ -165,7 +165,10 @@ def i_test(request, number):
 			bs = BeautifulSoup(r.text, 'html5lib')
 			re_av_info_li = bs.findAll('li', class_='video list av')
 			if len(re_av_info_li) is 0:
-				error = {'error':'这个图片真的找不到了'}
+				error = {
+					'error':'这个图片真的找不到了',
+					'r.text':r.text
+				}
 				error_json = json.dumps(error, ensure_ascii=False, indent=2)
 				return HttpResponse(error_json)
 			else:
