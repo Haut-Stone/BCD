@@ -161,13 +161,13 @@ def i_test(request, number):
 		if img_link is None:
 			pre_path = 'https://search.bilibili.com/all'
 			kv = {'keyword':av_number}
-			r = requests.get(url, headers=headers)
+			r = requests.get(pre_path, headers=headers)
 			bs = BeautifulSoup(r.text, 'html5lib')
 			re_av_info_li = bs.findAll('li', class_='video list av')
 			if len(re_av_info_li) is 0:
 				error = {
 					'error':'这个图片真的找不到了',
-					'r.text':r.text
+					'r.text':r.text,
 				}
 				error_json = json.dumps(error, ensure_ascii=False, indent=2)
 				return HttpResponse(error_json)
