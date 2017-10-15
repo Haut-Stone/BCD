@@ -151,7 +151,6 @@ def i_test(request, number):
 	try:
 		r = requests.get(url, headers=headers)
 		r.raise_for_status()
-		r.encoding = r.apparent_encoding
 	except:
 		error = {'error':'无法连接到这个网站'}
 		error_json = json.dumps(error, ensure_ascii=False, indent=2)
@@ -161,6 +160,9 @@ def i_test(request, number):
 		img_link = bs.findAll('img')[0].get('src')
 		if img_link is None:
 			error = {
+				'url':url,
+				'r.headers':dict(r.headers),
+				'r.response':dict(r.reponse),
 				'error':'没有找到图片',
 				'html':r.text,
 				'r.status_code':r.status_code,
@@ -173,6 +175,9 @@ def i_test(request, number):
 			contents = bs.findAll('meta')
 			author = contents[3].get('content')
 			info = {
+				'r.headers':dict(r.headers),
+				'html':r.text,
+				'r.status_code':r.status_code,
 				'url':img_url,
 				'title':title,
 				'author':author,
