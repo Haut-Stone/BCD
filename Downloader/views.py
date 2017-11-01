@@ -5,6 +5,7 @@ import re, requests, sys
 from bs4 import BeautifulSoup
 import json
 
+from .models import Waifu2xData
 
 #手工输入跳转
 def helloPage(request):
@@ -72,7 +73,7 @@ def spider(av_number):
 	cookies = {
 		'DedeUserID': '221013145',
 		'DedeUserID__ckMd5': '0ada37d8e37bee1f',
-		'SESSDATA': 'ddff3d5b%2C1508937653%2C5dc59211'
+		'SESSDATA': 'ddff3d5b%2C1511535760%2C509c3170'
 	}
 	video_url = "http://www.bilibili.com/video/" + av_number
 	r = requests.get(video_url, headers=headers, cookies=cookies)
@@ -159,3 +160,19 @@ def articleCover(request, cv_number):
 			return HttpResponse(info_json)
 	else:
 		return HttpResponse(default_json)
+
+def waifu2xData(request):  
+    try:
+        iphone = request.GET.get('iphone')
+        run_time = request.GET.get('time')
+        img_len = request.GET.get('len')
+        img_wid = request.GET.get('wid')
+        img_area = str(float(img_len)*float(img_wid))
+        status = {'status':'OK'}
+    except:
+        status = {'status':'ERROR'}
+    else:
+        data = Waifu2xData(iphone_type=iphone, run_time=run_time, img_len=img_len, img_wid=img_wid, img_area=img_area)
+        data.save()
+    status_json = json.dumps(status, ensure_ascii=False, indent=2)
+    return HttpResponse(status_json)
