@@ -11,4 +11,5 @@ class Waifu2xData(models.Model):
     img_area = models.CharField(max_length=100)
 
     def __str__(self):
-        return str(self.create_time)
+        return self.iphone_type + "---" + str("%.2f" % float(self.img_area)) +\
+		"---" + str("%.2f" % float(self.run_time))
