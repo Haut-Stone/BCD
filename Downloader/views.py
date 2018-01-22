@@ -73,14 +73,15 @@ def spider(av_number):
 	cookies = {
 		'DedeUserID': '221013145',
 		'DedeUserID__ckMd5': '0ada37d8e37bee1f',
-		'SESSDATA': 'ddff3d5b%2C1511535760%2C509c3170'
+		'SESSDATA': '1a5def63%2C1519203494%2Cb39a3fce'
 	}
 	video_url = "http://www.bilibili.com/video/" + av_number
 	r = requests.get(video_url, headers=headers, cookies=cookies)
 	bs = BeautifulSoup(r.text, 'html5lib')
-	img_link = bs.findAll('img')[0].get('src')
+	# img_link = bs.findAll('img')[0].get('src')
+	ok_test = bs.findAll('img')
 
-	if img_link is None:
+	if len(ok_test) == 0:
 		pre_path = 'https://search.bilibili.com/all'
 		kv = {'keyword':av_number}
 		r = requests.get(pre_path, headers=headers, params=kv)
@@ -100,6 +101,7 @@ def spider(av_number):
 			}
 			msg = info
 	else:
+		img_link = bs.findAll('img')[0].get('src')
 		img_url = "http:" + img_link
 		title = bs.findAll('h1')[0].get('title')
 		contents = bs.findAll('meta')
@@ -111,7 +113,6 @@ def fuckBilibili(request, av_number):
 
 	url = 'http://www.bilibili.com/video/av' + str(av_number)
 	headers = {'User-Agent':'Mozilla/5.0'}
-	
 	default = {'url':'error','title':'error','author':'error'}
 	default_json = json.dumps(default, ensure_ascii=False, indent=2)
 	try:
